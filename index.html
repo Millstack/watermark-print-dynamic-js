@@ -14,11 +14,11 @@
 
 </head>
 <body>
-    <div class="card-body col-md-6 p-2 m-auto mt-5 m">
-        <div class="mb-3">
-            <button id="btnPrint" type="button" onclick="printDiv('divPrint');" class="button btn btn-primary col-sm-2">Print</button>
-        </div>
-        <div id="divPrint">
+    <div class="mb-3 mt-5 text-center">
+        <button id="btnPrint" type="button" onclick="printDiv('divPrint', 'img');" class="button btn btn-primary col-sm-2">Print</button>
+    </div>
+    <div id="divPrint" class="card-body col-md-10 p-2 m-auto mt-5 m">
+        <div>
             <div class="border mb-4 p-2 shadow rounded-3">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus deserunt similique numquam dolorem inventore voluptas! Expedita nostrum aut natus aspernatur numquam recusandae voluptate rem excepturi necessitatibus voluptatem id, corrupti quasi ullam quos, totam tempora quod iure unde. Assumenda eos obcaecati, architecto, quod dolorem atque, cupiditate fugit libero dolorum ut hic?
             </div>
@@ -89,41 +89,84 @@
                     text-align: center;
                     color: rgba(0, 0, 0, 0.02);
                 }
+                .watermark-img {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(0deg);
+                    width: 150px;
+                    height: auto;
+                    opacity: 0.02;
+                }
             }
         `;
         document.head.appendChild(style);
 
         // printDiv function on onClick event
-        function printDiv(divId) {
+        function printDiv(divId, watermarkType) {
             var printContents = document.getElementById(divId).outerHTML;
             var originalContents = document.body.innerHTML;
 
             // Replace the current content with the content of the specified div
             document.body.innerHTML = printContents;
 
-            // Create a watermark container
-            var watermarkContainer = document.createElement('div');
-            watermarkContainer.className = 'watermark-container';
+            if (watermarkType === 'text'){
 
-            // Create the watermark element
-            var watermark = document.createElement('div');
-            watermark.className = 'watermark';
-            watermark.innerText = 'MillStack Watermark';
+                // Create a watermark container
+                var watermarkContainer = document.createElement('div');
+                watermarkContainer.className = 'watermark-container';
 
-            // Append the watermark to the container
-            watermarkContainer.appendChild(watermark);
+                // Create the watermark element as TEXT
+                var watermarkDIV = document.createElement('div');
+                watermarkDIV.className = 'watermark';
+                watermarkDIV.innerText = 'MillStack Watermark';
 
-            // Append the container to each printed page
-            var pages = document.querySelectorAll('.border'); // Assuming each .border is a page
-            pages.forEach(function(page) {
-                page.appendChild(watermarkContainer.cloneNode(true));
-            });
+                // Append the watermark to the container
+                watermarkContainer.appendChild(watermarkDIV);
 
-            // Trigger the print function
-            window.print();
+                // Append the container to each printed page
+                var pages = document.querySelectorAll('.border'); // Assuming each .border is a page
+                pages.forEach(function(page) {
+                    page.appendChild(watermarkContainer.cloneNode(true));
+                });
 
-            // Restore the original content after printing
-            document.body.innerHTML = originalContents;
+                // Trigger the print function
+                window.print();
+
+                // Restore the original content after printing
+                document.body.innerHTML = originalContents;
+            }
+            else if (watermarkType === 'img'){
+
+                // Create a watermark container
+                var watermarkContainer = document.createElement('div');
+                watermarkContainer.className = 'watermark-container';
+
+                // Create the watermark element as IMAGE
+                var watermarkImg = document.createElement('img');
+                watermarkImg.src = 'https://seeklogo.com/images/I/indian-government-logo-1C3F1925AA-seeklogo.com.png';
+
+                // Apply the class to the image element
+                watermarkImg.className = 'watermark-img';
+
+                watermarkImg.onload = function(){
+
+                    // Append the watermark to the container
+                    watermarkContainer.appendChild(watermarkImg);
+
+                    // Append the container to each printed page
+                    var pages = document.querySelectorAll('.border'); // Assuming each .border is a page
+                    pages.forEach(function(page) {
+                        page.appendChild(watermarkContainer.cloneNode(true));
+                    });
+
+                    // Trigger the print function
+                    window.print();
+
+                    // Restore the original content after printing
+                    document.body.innerHTML = originalContents;
+                }
+            }
         }
     </script>
 </body>
